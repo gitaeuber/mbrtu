@@ -1,0 +1,7 @@
+# backup files
+*~
+
+# Compiled source
+*.a
+*.so
+mbrtu
