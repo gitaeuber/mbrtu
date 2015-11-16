@@ -1,0 +1,31 @@
+2015-__-__ version v0.3.3
+* simplify call option parsing code => changed the logic of parsing call parameters (made easier!)
+* adjust and beautify help message
+* changed default data type to hex (instead of char) - hex is always printable
+* fix bug when no bus device is given
+* fix: make function 'w' be equal to '6' like help message tells
+* added README.md
+
+2015-11-13 version v0.3.2
+* enhance code readablity (I hope)
+* add AUTHORS
+* rename License to COPYING
+* change read functions letters (3=h, 4=i)
+* correct help message
+* correct return value
+* add quiet option "-Q" to suppress error messages
+* fix a bug with call option order
+
+2015-11-10 version v0.3
+* fix two bugs in parsing command line options
+* return the success/error value of the last modbus message
+* cleaned up the help message
+
+
+2015-10-27 version v0.2
+* minor bug fixes
+* added delay between calls
+* added parseable output format
+
+
+2015-10-24 initial version v0.1
