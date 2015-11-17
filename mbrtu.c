@@ -32,7 +32,7 @@
 static inline void show_help (void)
 {
     printf ("This is mbrtu version " MBRTU_VERSION " - GPL 2.1 (c) 2015 Lars Täuber\n"
-	    "lars.taeuber@web.de\n"
+	    "gitaeuber@users.noreply.github.com\n"
 	    "\n"
 	    "mbrtu -d DEVICE [-b BAUDRATE] [-p PARITY] [-s STOPPBITS] [-D]\n"
 	    "     [-a ADDR] [-f FUNC] [-t TYPE] [-n #] -r REG\n"
