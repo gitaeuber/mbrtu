@@ -43,7 +43,7 @@ static inline void show_help (void)
 	    "\t-d serial device\t/dev/ttyUSB?\n"
 	    "\t-b baud rate\t\t\tdefault: 9600\n"
 	    "\t-p parity\t\tE|O|N\tdefault: even\n"
-	    "\t-s number of stop bits\t[1|2]\tdefault: 1\n"
+	    "\t-s number of stop bits\t[1|2]\tdefault: 1 for odd and even parity, 2 for no parity\n"
 	    "\n"
 	    "\nThe following options generate calls:\n"
 	    "\t-a address of slave to ask 1-255\n"
