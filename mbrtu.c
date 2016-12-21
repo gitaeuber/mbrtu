@@ -427,9 +427,12 @@ static inline int parse_bus_parameter_options (int argc, char *argv[])
 		break;
 
 	    case 's':
-		switch ((conn->stopbits = (uint8_t) optarg[0])) {
-		    case 1:
-		    case 2:
+		switch (optarg[0]) {
+		    case '1':
+                        conn->stopbits = 1;
+                        break;
+		    case '2':
+                        conn->stopbits = 2;
 			break;
 		    default:
 			IF_N_QUIET fprintf (stderr, "Couldn't parse number stop bits: \"%s\"!\n", optarg);
