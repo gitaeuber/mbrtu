@@ -148,15 +148,30 @@ int parse_n_opt (mbrtu_call *call)
 		call->cnt++;
 
 	switch (call->type) {
+	    case MBRTU_TYPE_INT32:
+	    case MBRTU_TYPE_UINT32:
+	    case MBRTU_TYPE_F32_ABCD:
+	    case MBRTU_TYPE_F32_BADC:
+	    case MBRTU_TYPE_F32_CDAB:
+	    case MBRTU_TYPE_F32_DCBA:
+		call->cnt *= 2;			/* one value means two bytes to be sent */
+		break;
+	    case MBRTU_TYPE_INT64:
+	    case MBRTU_TYPE_UINT64:
+		call->cnt *= 4;			/* one value means four bytes to be sent */
+		break;
+	} /* switch */
+
+	if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
+	    IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
+	    exit (-1);
+	}
+
+	switch (call->type) {
 
 	    case MBRTU_TYPE_UINT16:
 	    case MBRTU_TYPE_INT16:
 	    case MBRTU_TYPE_HEX:
-		if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
-		    IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
-		    exit (-1);
-		}
-
 		for (int i = 0; i < call->cnt; i++) {
 		    buf = strsep (nbuf, ":");
 		    if ( buf == NULL )			/* empty values equal to 0 */
@@ -174,13 +189,6 @@ int parse_n_opt (mbrtu_call *call)
 
 	    case MBRTU_TYPE_UINT32:
 	    case MBRTU_TYPE_INT32:
-		call->cnt *= 2;				/* one value means two bytes to be sent */
-
-		if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
-		    IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
-		    exit (-1);
-		}
-
 		for (int i = 0; i < call->cnt; i+=2) {
 		    buf = strsep (nbuf, ":");
 		    if ( buf == NULL )			/* empty values equal to 0 */
@@ -198,13 +206,6 @@ int parse_n_opt (mbrtu_call *call)
 
 	    case MBRTU_TYPE_UINT64:
 	    case MBRTU_TYPE_INT64:
-		call->cnt *= 4;				/* one value means four bytes to be sent */
-
-		if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
-		    IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
-		    exit (-1);
-		}
-
 		for (int i = 0; i < call->cnt; i+=4) {
 		    buf = strsep (nbuf, ":");
 		    if ( buf == NULL )			/* empty values equal to 0 */
@@ -238,13 +239,6 @@ int parse_n_opt (mbrtu_call *call)
 		    case MBRTU_TYPE_F32_DCBA:
 			set_float = &modbus_set_float_dcba;
 			break;
-		}
-
-		call->cnt *= 2;				/* one value means two bytes to be sent */
-
-		if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
-		    IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
-		    exit (-1);
 		}
 
 		for (int i = 0; i < call->cnt; i+=2) {
