@@ -187,7 +187,7 @@ int parse_n_opt (mbrtu_call *call)
 	    for (int i = 0; i < call->cnt; i+=2) {
 		buf = strsep (nbuf, ":");
 		if ( buf == NULL )			/* empty values equal to 0 */
-		    MODBUS_SET_INT32_TO_INT16 (call->data, i, 0);
+		    MODBUS_SET_INT32_TO_INT16 (call->data, i, (long int) 0);
 		else {
 		    if (call->type == MBRTU_TYPE_UINT32)
 			MODBUS_SET_INT32_TO_INT16 (call->data, i, strtoul (buf, &endptr, 0));
@@ -215,7 +215,7 @@ int parse_n_opt (mbrtu_call *call)
 	    for (int i = 0; i < call->cnt; i+=4) {
 		buf = strsep (nbuf, ":");
 		if ( buf == NULL )			/* empty values equal to 0 */
-		    MODBUS_SET_INT64_TO_INT16 (call->data, i, 0);
+		    MODBUS_SET_INT64_TO_INT16 (call->data, i, (long long int) 0);
 		else {
 		    if (call->type == MBRTU_TYPE_UINT64)
 			MODBUS_SET_INT64_TO_INT16 (call->data, i, strtoull (buf, &endptr, 0));
@@ -307,30 +307,30 @@ void print_data (mbrtu_call *call)
 	    break;
 	case MBRTU_TYPE_UINT32:
 	    if (call->cnt) {
-		fprintf (stdout, "%lu", MODBUS_GET_INT32_FROM_INT16(call->data, 0));
+		fprintf (stdout, "%lu", (long unsigned int) MODBUS_GET_INT32_FROM_INT16(call->data, 0));
 		for (i=2; i < call->cnt; i+=2)
-		    fprintf (stdout, ":%lu", MODBUS_GET_INT32_FROM_INT16(call->data, i));
+		    fprintf (stdout, ":%lu", (long unsigned int) MODBUS_GET_INT32_FROM_INT16(call->data, i));
 	    }
 	    break;
 	case MBRTU_TYPE_INT32:
 	    if (call->cnt) {
-		fprintf (stdout, "%ld", MODBUS_GET_INT32_FROM_INT16(call->data, 0));
+		fprintf (stdout, "%ld", (long int) MODBUS_GET_INT32_FROM_INT16(call->data, 0));
 		for (i=2; i < call->cnt; i+=2)
-		    fprintf (stdout, ":%ld", MODBUS_GET_INT32_FROM_INT16(call->data, i));
+		    fprintf (stdout, ":%ld", (long int) MODBUS_GET_INT32_FROM_INT16(call->data, i));
 	    }
 	    break;
 	case MBRTU_TYPE_UINT64:
 	    if (call->cnt) {
-		fprintf (stdout, "%llu", MODBUS_GET_INT64_FROM_INT16(call->data, 0));
+		fprintf (stdout, "%llu", (long long unsigned int) MODBUS_GET_INT64_FROM_INT16(call->data, 0));
 		for (i=4; i < call->cnt; i+=4)
-		    fprintf (stdout, ":%llu", MODBUS_GET_INT64_FROM_INT16(call->data, i));
+		    fprintf (stdout, ":%llu", (long long unsigned int) MODBUS_GET_INT64_FROM_INT16(call->data, i));
 	    }
 	    break;
 	case MBRTU_TYPE_INT64:
 	    if (call->cnt) {
-		fprintf (stdout, "%lld", MODBUS_GET_INT64_FROM_INT16(call->data, 0));
+		fprintf (stdout, "%lld", (long long int) MODBUS_GET_INT64_FROM_INT16(call->data, 0));
 		for (i=4; i < call->cnt; i+=4)
-		    fprintf (stdout, ":%lld", MODBUS_GET_INT64_FROM_INT16(call->data, i));
+		    fprintf (stdout, ":%lld", (long long int) MODBUS_GET_INT64_FROM_INT16(call->data, i));
 	    }
 	    break;
 	case MBRTU_TYPE_HEX:
