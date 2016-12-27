@@ -124,33 +124,34 @@ int parse_n_opt (mbrtu_call *call)
     }
 
 /* write function */
+
+    if (call->type == MBRTU_TYPE_CHAR) {
+	/* count the number of values given to be sent */
+	/* 2 chars are one 16bit value to be written: */
+	call->cnt = (uint16_t) strlen (call->ntmp);
+	call->cnt ++;
+	call->cnt /= 2;
+
+	if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
+	    IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
+	    exit (-1);
+	}
+
+	for (int i = 0; i < call->cnt; i++)
+	    call->data[i] = (call->ntmp[2*i] << 8) + call->ntmp[2*i+1];
+
+    } else {
+
+	call->cnt = 1;				/* count the number of values given to be sent */
+	for (int i=0; call->ntmp[i]; i++)
+	    if (call->ntmp[i] == ':')
+		call->cnt++;
+
     switch (call->type) {
-
-	case MBRTU_TYPE_CHAR:
-	    /* count the number of values given to be sent */
-	    /* 2 chars are one 16bit value to be written: */
-	    call->cnt = (uint16_t) strlen (call->ntmp);
-	    call->cnt ++;
-	    call->cnt /= 2;
-
-	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
-		IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
-		exit (-1);
-	    }
-
-
-	    for (int i = 0; i < call->cnt; i++)
-		call->data[i] = (call->ntmp[2*i] << 8) + call->ntmp[2*i+1];
-	    break;
 
 	case MBRTU_TYPE_UINT16:
 	case MBRTU_TYPE_INT16:
 	case MBRTU_TYPE_HEX:
-	    call->cnt = 1;				/* count the number of values given to be sent */
-	    for (int i=0; call->ntmp[i]; i++)
-		if (call->ntmp[i] == ':')
-		    call->cnt++;
-
 	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
 		IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
 		exit (-1);
@@ -173,10 +174,6 @@ int parse_n_opt (mbrtu_call *call)
 
 	case MBRTU_TYPE_UINT32:
 	case MBRTU_TYPE_INT32:
-	    call->cnt = 1;				/* count the number of values given to be sent */
-	    for (int i=0; call->ntmp[i]; i++)
-		if (call->ntmp[i] == ':')
-		    call->cnt++;
 	    call->cnt *= 2;				/* one value means two bytes to be sent */
 
 	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
@@ -201,10 +198,6 @@ int parse_n_opt (mbrtu_call *call)
 
 	case MBRTU_TYPE_UINT64:
 	case MBRTU_TYPE_INT64:
-	    call->cnt = 1;				/* count the number of values given to be sent */
-	    for (int i=0; call->ntmp[i]; i++)
-		if (call->ntmp[i] == ':')
-		    call->cnt++;
 	    call->cnt *= 4;				/* one value means four bytes to be sent */
 
 	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
@@ -247,10 +240,6 @@ int parse_n_opt (mbrtu_call *call)
 		    break;
 	    }
 
-	    call->cnt = 1;				/* count the number of values given to be sent */
-	    for (int i=0; call->ntmp[i]; i++)
-		if (call->ntmp[i] == ':')
-		    call->cnt++;
 	    call->cnt *= 2;				/* one value means two bytes to be sent */
 
 	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
