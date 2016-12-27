@@ -79,6 +79,9 @@ static inline void show_help (void)
 	    "\t               or\tchar\n"
 	    "\t               or\tF32_[abcd|badc|cdab|dcba]\n"
 	    "\n"
+	    "\t-O timeout while waiting for answers in ms\n"
+	    "\t               value has to be greater or equal to 500 (default)\n"
+	    "\n"
 	    "\t-D enable debugging\n"
 	    "\t-Q quiet mode: disable debugging and don't write anything to stderr\n"
 	    "\t-P format output easier to parse\n"
@@ -372,9 +375,9 @@ static inline int parse_bus_parameter_options (int argc, char *argv[])
     int		ret;
 
     opterr = 0;
-			/* bus  options:    b:d:p:s:T:		 */
-			/* call options:	      a:f:n:r:t: */
-    while ((ret = getopt (argc, argv, "+:DhPQb:d:p:s:T:a:f:n:r:t:")) > 0) {
+			/* bus  options:     O:b:d:p:s:T:	    */
+			/* call options:		 a:f:n:r:t: */
+    while ((ret = getopt (argc, argv, "+:DhPQO:b:d:p:s:T:a:f:n:r:t:")) > 0) {
 	switch (ret) {
 	    case 'd':
 		ret = strlen(optarg);
@@ -446,6 +449,14 @@ static inline int parse_bus_parameter_options (int argc, char *argv[])
 
 	    case 'D':
 		global_flags |= MBRTU_FLAGS_DEBUG;
+		break;
+
+	    case 'O':
+		conn->timeout = strtol (optarg, NULL, 0);
+		if ((errno != 0) || (conn->timeout < 500)) {
+		    IF_N_QUIET fprintf (stderr, "Couldn't parse argument \"%s\". Value not greater than 500 or not in range for long int. Ignoring!\n", optarg);
+		    conn->timeout = 500;
+		}
 		break;
 
 	    case 'P':
@@ -634,6 +645,7 @@ int main(int argc, char *argv[])
     conn->stopbits = 1;
     conn->baudrate = 9600;
     conn->delay    = 0;
+    conn->timeout  = 500;
 /*
  * parse bus parameter options
  */
@@ -648,11 +660,14 @@ int main(int argc, char *argv[])
     if ( optarg != NULL ) {	/* only try to bind to device and */
 				/* parse next option if there was at least one call parameter */
 	conn->ctx = modbus_new_rtu (conn->dev_file, conn->baudrate, conn->parity, 8, conn->stopbits);
-
 	if (conn->ctx == NULL) {
 	    IF_N_QUIET fprintf(stderr, "Unable to create the libmodbus context.\n");
 	    return -1;
 	}
+
+	modbus_set_byte_timeout     (conn->ctx, conn->timeout/1000, (conn->timeout%1000)*1000);
+	modbus_set_response_timeout (conn->ctx, conn->timeout/1000, (conn->timeout%1000)*1000);
+IF_DEBUG	fprintf (stderr, "Timeout set to %lds and %ldms.\n", conn->timeout/1000, (conn->timeout%1000));
 
 	IF_DEBUG modbus_set_debug(conn->ctx, 1);
 	ret = parse_call_parameter_options (argc, argv, ret);	/* read call parameters and do the calls */

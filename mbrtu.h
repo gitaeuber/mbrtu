@@ -61,6 +61,7 @@ typedef struct {
     uint8_t		 stopbits;
     int			 baudrate;
     uint16_t		 delay;
+    long int		 timeout;
 } mbrtu_conn;
 
 
