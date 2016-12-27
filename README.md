@@ -20,7 +20,7 @@ Installation
 ------------
 
 * compile static libmodbus library
-* copy the resulting libmodbus.a into this directory
+* copy the resulting libmodbus.a to /usr/local/lib or into this directory and adapt Makefile
 * $ make
 * $ make install
 
