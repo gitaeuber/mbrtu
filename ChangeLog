@@ -1,4 +1,5 @@
-2015-__-__ version v0.3.3
+2016-__-__ version v0.3.3
+* add configureable timeout for answer from slaves
 * simplify call option parsing code => changed the logic of parsing call parameters (made easier!)
 * adjust and beautify help message
 * changed default data type to hex (instead of char) - hex is always printable
