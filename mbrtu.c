@@ -75,7 +75,7 @@ static inline void show_help (void)
 	    "\t   so all other call options (-a, -f, -n, -t) have to be set before\n"
 	    "\n"
 	    "\t-t type of values\thex\t(default)\n"
-	    "\t               or\t[u]int\n"
+	    "\t               or\t[u]int[16|32|64]\n"
 	    "\t               or\tchar\n"
 	    "\t               or\tF32_[abcd|badc|cdab|dcba]\n"
 	    "\n"
@@ -127,6 +127,7 @@ int parse_n_opt (mbrtu_call *call)
     switch (call->type) {
 
 	case MBRTU_TYPE_CHAR:
+	    /* count the number of values given to be sent */
 	    /* 2 chars are one 16bit value to be written: */
 	    call->cnt = (uint16_t) strlen (call->ntmp);
 	    call->cnt ++;
@@ -145,7 +146,7 @@ int parse_n_opt (mbrtu_call *call)
 	case MBRTU_TYPE_UINT16:
 	case MBRTU_TYPE_INT16:
 	case MBRTU_TYPE_HEX:
-	    call->cnt = 1;
+	    call->cnt = 1;				/* count the number of values given to be sent */
 	    for (int i=0; call->ntmp[i]; i++)
 		if (call->ntmp[i] == ':')
 		    call->cnt++;
@@ -157,7 +158,7 @@ int parse_n_opt (mbrtu_call *call)
 
 	    for (int i = 0; i < call->cnt; i++) {
 		buf = strsep (nbuf, ":");
-		if ( buf == NULL )
+		if ( buf == NULL )			/* empty values equal to 0 */
 		    call->data[i] = 0;
 		else {
 		    call->data[i] = (uint16_t) strtol (buf, &endptr, 0);
@@ -166,6 +167,57 @@ int parse_n_opt (mbrtu_call *call)
 		}
 	    }
 	    break;
+
+	case MBRTU_TYPE_UINT32:
+	case MBRTU_TYPE_INT32:
+	    call->cnt = 1;				/* count the number of values given to be sent */
+	    for (int i=0; call->ntmp[i]; i++)
+		if (call->ntmp[i] == ':')
+		    call->cnt++;
+	    call->cnt *= 2;				/* one value means two bytes to be sent */
+
+	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
+		IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
+		exit (-1);
+	    }
+
+	    for (int i = 0; i < call->cnt; i+=2) {
+		buf = strsep (nbuf, ":");
+		if ( buf == NULL )			/* empty values equal to 0 */
+		    MODBUS_SET_INT32_TO_INT16 (call->data, i, 0);
+		else {
+		    MODBUS_SET_INT32_TO_INT16 (call->data, i, strtol (buf, &endptr, 0));
+		    if (*endptr != '\0')
+			ret--;
+		}
+	    }
+	    break;
+
+	case MBRTU_TYPE_UINT64:
+	case MBRTU_TYPE_INT64:
+	    call->cnt = 1;				/* count the number of values given to be sent */
+	    for (int i=0; call->ntmp[i]; i++)
+		if (call->ntmp[i] == ':')
+		    call->cnt++;
+	    call->cnt *= 4;				/* one value means four bytes to be sent */
+
+	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
+		IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
+		exit (-1);
+	    }
+
+	    for (int i = 0; i < call->cnt; i+=4) {
+		buf = strsep (nbuf, ":");
+		if ( buf == NULL )			/* empty values equal to 0 */
+		    MODBUS_SET_INT64_TO_INT16 (call->data, i, 0);
+		else {
+		    MODBUS_SET_INT64_TO_INT16 (call->data, i, strtoll (buf, &endptr, 0));
+		    if (*endptr != '\0')
+			ret--;
+		}
+	    }
+	    break;
+
 
 	default: {	/* float */
 
@@ -186,21 +238,20 @@ int parse_n_opt (mbrtu_call *call)
 		    break;
 	    }
 
-	    call->cnt = 1;
+	    call->cnt = 1;				/* count the number of values given to be sent */
 	    for (int i=0; call->ntmp[i]; i++)
 		if (call->ntmp[i] == ':')
 		    call->cnt++;
-	    call->cnt *= 2;
+	    call->cnt *= 2;				/* one value means two bytes to be sent */
 
 	    if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
 		IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
 		exit (-1);
 	    }
 
-
 	    for (int i = 0; i < call->cnt; i+=2) {
 		buf = strsep (nbuf, ":");
-		if ( buf == NULL )
+		if ( buf == NULL )			/* empty values equal to 0 */
 		    set_float (0, &call->data[i]);
 		else {
 		    set_float (strtof (buf, &endptr), &call->data[i]);
@@ -243,6 +294,34 @@ void print_data (mbrtu_call *call)
 		fprintf (stdout, "%d", call->data[0]);
 		for (i=1; i < call->cnt; i++)
 		    fprintf (stdout, ":%d", call->data[i]);
+	    }
+	    break;
+	case MBRTU_TYPE_UINT32:
+	    if (call->cnt) {
+		fprintf (stdout, "%lu", MODBUS_GET_INT32_FROM_INT16(call->data, 0));
+		for (i=2; i < call->cnt; i+=2)
+		    fprintf (stdout, ":%lu", MODBUS_GET_INT32_FROM_INT16(call->data, i));
+	    }
+	    break;
+	case MBRTU_TYPE_INT32:
+	    if (call->cnt) {
+		fprintf (stdout, "%ld", MODBUS_GET_INT32_FROM_INT16(call->data, 0));
+		for (i=2; i < call->cnt; i+=2)
+		    fprintf (stdout, ":%ld", MODBUS_GET_INT32_FROM_INT16(call->data, i));
+	    }
+	    break;
+	case MBRTU_TYPE_UINT64:
+	    if (call->cnt) {
+		fprintf (stdout, "%llu", MODBUS_GET_INT64_FROM_INT16(call->data, 0));
+		for (i=4; i < call->cnt; i+=4)
+		    fprintf (stdout, ":%llu", MODBUS_GET_INT64_FROM_INT16(call->data, i));
+	    }
+	    break;
+	case MBRTU_TYPE_INT64:
+	    if (call->cnt) {
+		fprintf (stdout, "%lld", MODBUS_GET_INT64_FROM_INT16(call->data, 0));
+		for (i=4; i < call->cnt; i+=4)
+		    fprintf (stdout, ":%lld", MODBUS_GET_INT64_FROM_INT16(call->data, i));
 	    }
 	    break;
 	case MBRTU_TYPE_HEX:
@@ -587,6 +666,18 @@ inline int parse_call_parameter_options (int argc, char *argv[], int option)
 		    call->type = MBRTU_TYPE_UINT16;
 		else if (! strncasecmp ("CHAR",     optarg, 4))
 		    call->type = MBRTU_TYPE_CHAR;
+		else if (! strncasecmp ("int16",    optarg, 5))
+		    call->type = MBRTU_TYPE_INT16;
+		else if (! strncasecmp ("int32",    optarg, 5))
+		    call->type = MBRTU_TYPE_INT32;
+		else if (! strncasecmp ("int64",    optarg, 5))
+		    call->type = MBRTU_TYPE_INT64;
+		else if (! strncasecmp ("uint16",   optarg, 6))
+		    call->type = MBRTU_TYPE_UINT16;
+		else if (! strncasecmp ("uint32",   optarg, 6))
+		    call->type = MBRTU_TYPE_UINT32;
+		else if (! strncasecmp ("uint64",   optarg, 6))
+		    call->type = MBRTU_TYPE_UINT64;
 		else if (! strncasecmp ("F32_ABCD", optarg, 8))
 		    call->type = MBRTU_TYPE_F32_ABCD;
 		else if (! strncasecmp ("F32_BADC", optarg, 8))

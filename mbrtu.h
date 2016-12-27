@@ -33,8 +33,10 @@
 
 #define MBRTU_TYPE_UINT16	0x0001
 #define MBRTU_TYPE_UINT32	0x0002
-#define MBRTU_TYPE_INT16	0x0003
-#define MBRTU_TYPE_INT32	0x0004
+#define MBRTU_TYPE_UINT64	0x0003
+#define MBRTU_TYPE_INT16	0x0004
+#define MBRTU_TYPE_INT32	0x0005
+#define MBRTU_TYPE_INT64	0x0006
 #define MBRTU_TYPE_F16		0x0010
 #define MBRTU_TYPE_F32_ABCD	0x0011
 #define MBRTU_TYPE_F32_BADC	0x0012
@@ -68,9 +70,9 @@ typedef struct {
 typedef struct {
     uint8_t		addr,
 			func;
-    uint16_t		cnt,
+    uint16_t		cnt,		/* bytes to be sent or received */
 			reg,
-			type,
+			type,		/* type of value (int, float, char, ... ) */
 			*data;
     char		*ntmp;
 } mbrtu_call;
