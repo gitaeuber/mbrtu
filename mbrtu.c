@@ -161,7 +161,10 @@ int parse_n_opt (mbrtu_call *call)
 		if ( buf == NULL )			/* empty values equal to 0 */
 		    call->data[i] = 0;
 		else {
-		    call->data[i] = (uint16_t) strtol (buf, &endptr, 0);
+		    if (call->type == MBRTU_TYPE_UINT16)
+			call->data[i] = (uint16_t) strtoul (buf, &endptr, 0);
+		    else
+			call->data[i] = (uint16_t) strtol  (buf, &endptr, 0);
 		    if (*endptr != '\0')
 			ret--;
 		}
@@ -186,7 +189,10 @@ int parse_n_opt (mbrtu_call *call)
 		if ( buf == NULL )			/* empty values equal to 0 */
 		    MODBUS_SET_INT32_TO_INT16 (call->data, i, 0);
 		else {
-		    MODBUS_SET_INT32_TO_INT16 (call->data, i, strtol (buf, &endptr, 0));
+		    if (call->type == MBRTU_TYPE_UINT32)
+			MODBUS_SET_INT32_TO_INT16 (call->data, i, strtoul (buf, &endptr, 0));
+		    else
+			MODBUS_SET_INT32_TO_INT16 (call->data, i, strtol  (buf, &endptr, 0));
 		    if (*endptr != '\0')
 			ret--;
 		}
@@ -211,7 +217,10 @@ int parse_n_opt (mbrtu_call *call)
 		if ( buf == NULL )			/* empty values equal to 0 */
 		    MODBUS_SET_INT64_TO_INT16 (call->data, i, 0);
 		else {
-		    MODBUS_SET_INT64_TO_INT16 (call->data, i, strtoll (buf, &endptr, 0));
+		    if (call->type == MBRTU_TYPE_UINT64)
+			MODBUS_SET_INT64_TO_INT16 (call->data, i, strtoull (buf, &endptr, 0));
+		    else
+			MODBUS_SET_INT64_TO_INT16 (call->data, i, strtoll  (buf, &endptr, 0));
 		    if (*endptr != '\0')
 			ret--;
 		}
