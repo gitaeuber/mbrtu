@@ -582,9 +582,9 @@ inline int parse_call_parameter_options (int argc, char *argv[], int option)
 		call->type = MBRTU_TYPE_HEX;
 
 		if      (! strncasecmp ("int",      optarg, 3))
-		    call->type = MBRTU_TYPE_UINT16;
-		else if (! strncasecmp ("uint",     optarg, 4))
 		    call->type = MBRTU_TYPE_INT16;
+		else if (! strncasecmp ("uint",     optarg, 4))
+		    call->type = MBRTU_TYPE_UINT16;
 		else if (! strncasecmp ("CHAR",     optarg, 4))
 		    call->type = MBRTU_TYPE_CHAR;
 		else if (! strncasecmp ("F32_ABCD", optarg, 8))
