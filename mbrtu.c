@@ -665,7 +665,6 @@ int main(int argc, char *argv[])
 	    return -1;
 	}
 
-	modbus_set_byte_timeout     (conn->ctx, conn->timeout/1000, (conn->timeout%1000)*1000);
 	modbus_set_response_timeout (conn->ctx, conn->timeout/1000, (conn->timeout%1000)*1000);
 IF_DEBUG	fprintf (stderr, "Timeout set to %lds and %ldms.\n", conn->timeout/1000, (conn->timeout%1000));
 
