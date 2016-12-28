@@ -74,7 +74,7 @@ static inline void show_help (void)
 	    "\t   this option emits the call on the bus\n"
 	    "\t   so all other call options (-a, -f, -n, -t) have to be set before\n"
 	    "\n"
-	    "\t-t type of values\thex\t(default)\n"
+	    "\t-t type of values\thex\n"
 	    "\t               or\t[u]int[16|32|64]\n"
 	    "\t               or\tchar\n"
 	    "\t               or\tF32_[abcd|badc|cdab|dcba]\n"
