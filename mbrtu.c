@@ -685,11 +685,7 @@ inline int parse_call_parameter_options (int argc, char *argv[], int option)
 		    fprintf (stderr, "couldn't parse data type: %s\n", optarg);
 		    exit (-1);
 		}
-
 IF_DEBUG	fprintf (stderr, "data type = 0x%x\n", call->type);
-
-
-//		set_flags |= MBRTU_SET_TYPE;
 		break;
 
 	    case 'D':

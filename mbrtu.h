@@ -28,7 +28,6 @@
 #define MBRTU_SET_FUNC		0x02
 #define MBRTU_SET_REG		0x04
 #define MBRTU_SET_CNT		0x08
-#define MBRTU_SET_TYPE		0x10
 
 
 #define MBRTU_TYPE_UINT16	0x0001
