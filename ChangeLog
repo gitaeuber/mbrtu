@@ -1,4 +1,5 @@
 2016-__-__ version v0.3.3
+* add test to make sure data type fits number of 16-bit registers
 * fix bug parsing the data types
 * restructure code and add some minor comments
 * add support for int32 and int64
