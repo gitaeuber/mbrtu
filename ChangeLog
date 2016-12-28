@@ -1,4 +1,5 @@
 2016-__-__ version v0.3.3
+* fix bug parsing the data types
 * restructure code and add some minor comments
 * add support for int32 and int64
 * fix several bugs with unsigned values
