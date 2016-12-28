@@ -651,34 +651,43 @@ inline int parse_call_parameter_options (int argc, char *argv[], int option)
 
 
 	    case 't':
-		call->type = MBRTU_TYPE_HEX;
+		call->type = 0;
 
-		if	(! strncasecmp ("F32_ABCD", optarg, 8))
+		if	(! strncasecmp ("F32_ABCD", optarg, 9))
 		    call->type = MBRTU_TYPE_F32_ABCD;
-		else if (! strncasecmp ("F32_BADC", optarg, 8))
+		else if (! strncasecmp ("F32_BADC", optarg, 9))
 		    call->type = MBRTU_TYPE_F32_BADC;
-		else if (! strncasecmp ("F32_CDAB", optarg, 8))
+		else if (! strncasecmp ("F32_CDAB", optarg, 9))
 		    call->type = MBRTU_TYPE_F32_CDAB;
-		else if (! strncasecmp ("F32_DCBA", optarg, 8))
+		else if (! strncasecmp ("F32_DCBA", optarg, 9))
 		    call->type = MBRTU_TYPE_F32_DCBA;
-		else if (! strncasecmp ("uint16",   optarg, 6))
+		else if (! strncasecmp ("uint16",   optarg, 7))
 		    call->type = MBRTU_TYPE_UINT16;
-		else if (! strncasecmp ("uint32",   optarg, 6))
+		else if (! strncasecmp ("uint32",   optarg, 7))
 		    call->type = MBRTU_TYPE_UINT32;
-		else if (! strncasecmp ("uint64",   optarg, 6))
+		else if (! strncasecmp ("uint64",   optarg, 7))
 		    call->type = MBRTU_TYPE_UINT64;
-		else if (! strncasecmp ("int16",    optarg, 5))
+		else if (! strncasecmp ("int16",    optarg, 6))
 		    call->type = MBRTU_TYPE_INT16;
-		else if (! strncasecmp ("int32",    optarg, 5))
+		else if (! strncasecmp ("int32",    optarg, 6))
 		    call->type = MBRTU_TYPE_INT32;
-		else if (! strncasecmp ("int64",    optarg, 5))
+		else if (! strncasecmp ("int64",    optarg, 6))
 		    call->type = MBRTU_TYPE_INT64;
-		else if (! strncasecmp ("uint",     optarg, 4))
+		else if (! strncasecmp ("uint",     optarg, 5))
 		    call->type = MBRTU_TYPE_UINT16;
-		else if (! strncasecmp ("CHAR",     optarg, 4))
+		else if (! strncasecmp ("CHAR",     optarg, 5))
 		    call->type = MBRTU_TYPE_CHAR;
-		else if (! strncasecmp ("int",      optarg, 3))
+		else if (! strncasecmp ("int",      optarg, 4))
 		    call->type = MBRTU_TYPE_INT16;
+		else if (! strncasecmp ("hex",      optarg, 4))
+		    call->type = MBRTU_TYPE_HEX;
+		else {
+		    fprintf (stderr, "couldn't parse data type: %s\n", optarg);
+		    exit (-1);
+		}
+
+IF_DEBUG	fprintf (stderr, "data type = 0x%x\n", call->type);
+
 
 //		set_flags |= MBRTU_SET_TYPE;
 		break;
