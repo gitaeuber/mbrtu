@@ -365,6 +365,32 @@ int make_call (mbrtu_call *call)
 
 IF_DEBUG	fprintf (stdout, "ADDR=%u FUNC=%u REG=%u CNT=%u\n", call->addr, call->func, call->reg, call->cnt);
 
+    if (call->cnt == 0) {
+	fprintf (stdout, "reading or writing nothing, because CNT=0\n");
+	return 0;
+    }
+
+    switch (call->type) {
+	case MBRTU_TYPE_F32_ABCD:
+	case MBRTU_TYPE_F32_BADC:
+	case MBRTU_TYPE_F32_CDAB:
+	case MBRTU_TYPE_F32_DCBA:
+	case MBRTU_TYPE_INT32:
+	case MBRTU_TYPE_UINT32:
+	    if ((call->cnt%2) > 0) {		/* we need to read or write an even number of 16-bit registers with theses data types */
+		fprintf (stdout, "number of 16-bit modbus registers to read or write (%d) doesn't fit data type\n", call->cnt);
+		return -1;
+	    }
+	    break;
+	case MBRTU_TYPE_INT64:
+	case MBRTU_TYPE_UINT64:
+	    if ((call->cnt%4) > 0) {		/* we need to read or write a number of 16-bit registers that can be divided by 4 with theses data types */
+		fprintf (stdout, "number of 16-bit modbus registers to read or write (%d) doesn't fit data type\n", call->cnt);
+		return -1;
+	    }
+	    break;
+    } /* switch */
+
     if (call->func == 3 || call->func == 4)
 	if (NULL == (call->data = realloc (call->data, call->cnt * sizeof(uint16_t)))) {
 	    IF_N_QUIET fprintf (stderr, "Not enough memory available!\n");
