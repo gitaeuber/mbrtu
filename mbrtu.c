@@ -584,8 +584,7 @@ static inline int parse_bus_parameter_options (int argc, char *argv[])
 }
 
 
-
-inline int parse_call_parameter_options (int argc, char *argv[], int option)
+int parse_call_parameter_options (int argc, char *argv[], int option)
 {
     int		set_flags = 0;
     int		ret = 0;
