@@ -1,0 +1,14 @@
+Index: mbrtu/mbrtu.c
+===================================================================
+--- mbrtu.orig/mbrtu.c
++++ mbrtu/mbrtu.c
+@@ -584,8 +584,7 @@ static inline int parse_bus_parameter_op
+ }
+ 
+ 
+-
+-inline int parse_call_parameter_options (int argc, char *argv[], int option)
++int parse_call_parameter_options (int argc, char *argv[], int option)
+ {
+     int		set_flags = 0;
+     int		ret = 0;
