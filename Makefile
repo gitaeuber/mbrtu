@@ -6,7 +6,7 @@ SRCS=mbrtu.c
 all: mbrtu
 
 mbrtu: $(SRCS) mbrtu.h
-	$(CC) $(CFLAGS) $(LFLAGS) $(LDFLAGS) $(SRCS) -o $@
+	$(CC) $(CFLAGS) $(LFLAGS) $(SRCS) $(LDFLAGS) -o $@
 
 clean:
 	rm -f *.o mbrtu
